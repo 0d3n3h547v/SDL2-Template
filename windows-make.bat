@@ -6,7 +6,7 @@ make
 echo.
 echo.   Prompting to send nro to NetLoader
 echo.
-nxlink -a 192.168.188.38 sdl2-simple.nro
+nxlink -a 192.168.188.38 SDL2-Template.nro
 echo.
 echo.           ### ATTENTION ###
 echo.      unused files will be deleted
