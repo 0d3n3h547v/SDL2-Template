@@ -22,11 +22,40 @@ typedef struct {
 	
 } SDL_StructText;
 
-void Helper_DebugLogs(const char*text);
-void Helper_DebugPrint(const char*text);
+/* NOT USEFUL FOR END USER **
 
-void Helper_CreateTextureFromText(SDL_Window *w, SDL_StructText *st, const char*text, const char*p, int size, int y, int x, SDL_Color color);
-void Helper_DestroyStructText(SDL_StructText * st);
+void Helper_DebugLogs(const char*text) {
+	FILE * fd = fopen("sdmc:/sdl2-log", "a");
+	fprintf(fd, "sdl2-log: %s\n", text);
+	fclose(fd);
+}
+
+** NOT USEFUL FOR END USER */ 
+
+void Helper_CreateTextureFromText(SDL_Renderer *r, SDL_StructText *st, const char*text, const char*p, int size, int y, int x, SDL_Color color) {
+	
+	SDL_StructText pd;
+	pd.txt_font = TTF_OpenFont(p, size);
+
+	SDL_Surface * s = TTF_RenderText_Solid(pd.txt_font, text, color);
+	pd.txt_texture = SDL_CreateTextureFromSurface(r, s);
+	SDL_FreeSurface(s);
+	
+	TTF_SizeText(pd.txt_font, text, &pd.txt_rect.w, &pd.txt_rect.h);
+	
+	pd.txt_rect.y = y; // vertical point
+	pd.txt_rect.x = x; // horizontal point
+	
+	memcpy(st, &pd, sizeof(pd));
+	
+	return;
+}
+
+void Helper_DestroyStructText(SDL_StructText * st) {
+	SDL_DestroyTexture(st->txt_texture);
+	TTF_CloseFont(st->txt_font);
+	return;
+}
 
 int main(void) {
 	
@@ -40,11 +69,11 @@ int main(void) {
 	
 	texture = IMG_LoadTexture(renderer, "romfs:/background.png");
 	
-	SDL_StructText Title = {0};
-	Helper_CreateTextureFromText(window, &Title, "hello there!", "romfs:/aquawax.ttf", 36, 10, 10, white);
+	SDL_StructText Title;
+	Helper_CreateTextureFromText(renderer, &Title, "hello there!", "romfs:/aquawax.ttf", 36, 10, 10, white);
 	
-	SDL_StructText comment = {0};
-	Helper_CreateTextureFromText(window, &comment, "This is a test to see if its working!", "romfs:/aquawax.ttf", 36, 150, 150, white);
+	SDL_StructText comment;
+	Helper_CreateTextureFromText(renderer, &comment, "This is a test to see if its working!", "romfs:/aquawax.ttf", 36, 150, 150, white);
 	
 	while(appletMainLoop()) {
 		
@@ -72,55 +101,4 @@ int main(void) {
 	romfsExit();
 	
 	return (EXIT_SUCCESS);	
-}
-
-void Helper_DebugLogs(const char*text) {
-	FILE * fd = fopen("sdmc:/sdl2-log", "a");
-	fprintf(fd, "sdl2-log: %s\n", text);
-	fclose(fd);
-}
-
-void Helper_DebugPrint(const char*text) {
-    consoleInit(NULL);
-
-    printf("Helper: %s", text);
-
-    while(appletMainLoop())
-    {
-        hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-
-        if (kDown & KEY_PLUS) break;
-
-        consoleUpdate(NULL);
-    }
-
-    consoleExit(NULL);
-    return;
-}
-
-void Helper_CreateTextureFromText(SDL_Window w, SDL_StructText *st, const char*text, const char*p, int size, int y, int x, SDL_Color color) {
-	
-	SDL_StructText pd;
-	pd.txt_font = TTF_OpenFont(p, size);
-	
-	SDL_Renderer * r = SDL_CreateRenderer(&w, 0 , SDL_RENDERER_ACCELERATED);
-	SDL_Surface * s = TTF_RenderText_Solid(pd.txt_font, text, color);
-	pd.txt_texture = SDL_CreateTextureFromSurface(r, s);
-	SDL_FreeSurface(s);
-	
-	TTF_SizeText(pd.txt_font, text, &pd.txt_rect.w, &pd.txt_rect.h);
-	
-	pd.txt_rect.y = y; // vertical point
-	pd.txt_rect.x = x; // horizontal point
-	
-	memcpy(st, &pd, sizeof(pd));
-	
-	return;
-}
-
-void Helper_DestroyStructText(SDL_StructText * st) {
-	SDL_DestroyTexture(st->txt_texture);
-	TTF_CloseFont(st->txt_font);
-	return;
 }
