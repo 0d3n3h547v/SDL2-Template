@@ -3,59 +3,13 @@
 #include <string.h>
 #include <switch.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include "SDL_Helper.h"
 
 SDL_Window * window;
 SDL_Renderer * renderer;
-SDL_Surface * surface;
 SDL_Texture * texture;
 
-SDL_Color white = {255, 255, 255, 255};
-
-typedef struct {
-	
-	TTF_Font 	* txt_font;
-	SDL_Texture * txt_texture;
-	SDL_Rect 	txt_rect;
-	
-} SDL_StructText;
-
-/* NOT USEFUL FOR END USER **
-
-void Helper_DebugLogs(const char*text) {
-	FILE * fd = fopen("sdmc:/sdl2-log", "a");
-	fprintf(fd, "sdl2-log: %s\n", text);
-	fclose(fd);
-}
-
-** NOT USEFUL FOR END USER */ 
-
-void Helper_CreateTextureFromText(SDL_Renderer *r, SDL_StructText *st, const char*text, const char*p, int size, int y, int x, SDL_Color color) {
-	
-	SDL_StructText pd;
-	pd.txt_font = TTF_OpenFont(p, size);
-
-	SDL_Surface * s = TTF_RenderText_Solid(pd.txt_font, text, color);
-	pd.txt_texture = SDL_CreateTextureFromSurface(r, s);
-	SDL_FreeSurface(s);
-	
-	TTF_SizeText(pd.txt_font, text, &pd.txt_rect.w, &pd.txt_rect.h);
-	
-	pd.txt_rect.y = y; // vertical point
-	pd.txt_rect.x = x; // horizontal point
-	
-	memcpy(st, &pd, sizeof(pd));
-	
-	return;
-}
-
-void Helper_DestroyStructText(SDL_StructText * st) {
-	SDL_DestroyTexture(st->txt_texture);
-	TTF_CloseFont(st->txt_font);
-	return;
-}
+SDL_Color h_white = {255, 255, 255, 255};
 
 int main(void) {
 	
@@ -70,10 +24,10 @@ int main(void) {
 	texture = IMG_LoadTexture(renderer, "romfs:/background.png");
 	
 	SDL_StructText Title;
-	Helper_CreateTextureFromText(renderer, &Title, "hello there!", "romfs:/aquawax.ttf", 36, 10, 10, white);
+	Helper_CreateTextureFromText(renderer, &Title, "hello there!", "romfs:/aquawax.ttf", 36, 10, 10, h_white);
 	
 	SDL_StructText comment;
-	Helper_CreateTextureFromText(renderer, &comment, "This is a test to see if its working!", "romfs:/aquawax.ttf", 36, 150, 150, white);
+	Helper_CreateTextureFromText(renderer, &comment, "This is a test to see if its working!", "romfs:/aquawax.ttf", 36, 150, 150, h_white);
 	
 	while(appletMainLoop()) {
 		
