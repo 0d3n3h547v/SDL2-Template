@@ -16,4 +16,6 @@ typedef struct {
 void Helper_CreateTextureFromText(SDL_Renderer *r, SDL_StructText *st, const char*text, const char*p, int size, int y, int x, SDL_Color color);
 void Helper_DestroyStructText(SDL_StructText * st);
 
+void Helper_StructRect(SDL_Rect * rect, int y, int x, int w, int h);
+
 #endif
